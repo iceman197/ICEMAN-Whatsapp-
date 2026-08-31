@@ -23,23 +23,35 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            git \
-            zip \
-            unzip \
+            git zip unzip \
             openjdk-17-jdk \
+            python3-pip \
+            autoconf \
+            libtool \
+            pkg-config \
+            zlib1g-dev \
+            libncurses5-dev \
             libffi-dev \
             libssl-dev \
-            libtinfo5
+            cmake
 
           python -m pip install --upgrade pip
           pip install buildozer cython
 
+      - name: Accept Android SDK licenses
+        run: |
+          mkdir -p ~/.buildozer/android/platform
+          touch ~/.buildozer/android/platform/repositories.cfg
+
       - name: Build APK
+        env:
+          APP_ANDROID_ACCEPT_SDK_LICENSE: "1"
+          BUILDOZER_WARN_ON_ROOT: "0"
         run: |
           buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: ICEMAN-Math-Solver-APK
-          path: bin/*.apk￼Enter
+          name: ICEMAN-APK
+          path: bin/*.apk
