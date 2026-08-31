@@ -1,0 +1,43 @@
+name: Build ICEMAN APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get source code
+        uses: actions/checkout@v4
+
+      - name: Install Buildozer
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            python3-pip \
+            git \
+            zip \
+            unzip \
+            openjdk-17-jdk \
+            autoconf \
+            automake \
+            libtool \
+            pkg-config \
+            zlib1g-dev \
+            libncurses5-dev \
+            libtinfo5
+          pip3 install --user buildozer cython
+
+      - name: Build APK
+        run: |
+          ~/.local/bin/buildozer android debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ICEMAN-Math-Solver-APK
+          path: bin/*.apk
